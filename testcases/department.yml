@@ -1,0 +1,88 @@
+
+config:
+    name: "department"
+    variables:
+        id: 1
+        corpid: ww85fc8a337d68c29f
+        corpsecret: -L8fjHHrSauoOuXn4ZMqXInzSmeUctZf150Dmz8Z03c
+    base_url: "https://qyapi.weixin.qq.com/cgi-bin/"
+    verify: False
+
+teststeps:
+-
+    name: get_token
+    variables:
+        corpid: $corpid
+        corpsecret: $corpsecret
+    request:
+        method: GET
+
+        url: gettoken
+        params:
+            corpid: $corpid
+            corpsecret: $corpsecret
+        headers:
+            User-Agent: HttpRunner/${get_httprunner_version()}
+    extract:
+        access_token: content.access_token
+
+    validate:
+        - eq: ["status_code", 200]
+
+-
+    name: department_list
+    variables:
+        id: $id
+
+    request:
+        method: POST
+        url: department/list
+        params:
+            access_token: $access_token
+            id: $id
+        headers:
+            User-Agent: HttpRunner/${get_httprunner_version()}
+
+    validate:
+        - eq: ["status_code", 200]
+
+-
+    name: create_department
+    variables:
+        id: 1
+    request:
+        method: POST
+        url: department/create
+        params:
+            access_token: $access_token
+        headers:
+            User-Agent: HttpRunner/${get_httprunner_version()}
+        json:
+          {
+              "name": "广州研发中心",
+              "name_en": "RDGZ",
+              "parentid": 1,
+              "order": 29,
+              "id": 29
+          }
+
+    validate:
+        - eq: ["status_code", 200]
+
+-
+    name: delete_department
+    variables:
+        id: 29
+    request:
+        method: GET
+        url: department/delete
+        params:
+            access_token: $access_token
+            id: $id
+        headers:
+            User-Agent: HttpRunner/${get_httprunner_version()}
+
+    validate:
+        - eq: ["status_code", 200]
+
+
